@@ -1,52 +1,49 @@
 #include "main.h"
 
-int is_lowercase(char);
-char *string_to_upper(char *);
-
 /**
- * print_hexadecimal_upp - Print string in hexadecimal format
- * @list: list the number to be  printed
- * Return: Length of the number
+ * prinhupx - prints a short decimal in hexadecimal
+ * @arguments: The character to print
+ * @buf: buffer pointer
+ * @ibuf: index for buffer pointer
+ * Return: number of chars printed
  */
-int print_hexadecimal_upp(va_list list)
+int prinhupx(va_list arguments, char *buf, unsigned int ibuf)
 {
-	char *p_buff;
-	int size;
+	short int int_input, i, isnegative, count, first_digit;
+	char *hexadecimal, *binary;
 
-	p_buff = itoa(va_arg(list, unsigned int), 16);
-	p_buff = string_to_upper(p_buff);
+	int_input = va_arg(arguments, int);
+	isnegative = 0;
 
-	size = print((p_buff != NULL) ? p_buff : "NULL");
-
-	return (size);
-}
-
-/**
- * is_lowercase - verrify if the string is in lowercase
- * @c: Character
- * Return: 1 or 0
- */
-int is_lowercase(char c)
-{
-	return (c >= 'a' && c <= 'z');
-}
-
-/**
- * string_to_upper - print string in uppercase
- * @s: character
- * Return: String in  uppercase
- */
-char *string_to_upper(char *s)
-{
-	int i;
-
-	for (i = 0; s[i] != '\0'; i++)
+	if (int_input == 0)
 	{
-		if (is_lowercase(s[i]))
+		ibuf = handl_buf(buf, '0', ibuf);
+		return (1);
+	}
+	if (int_input < 0)
+	{
+		int_input = (int_input * -1) - 1;
+		isnegative = 1;
+	}
+
+	binary = malloc(sizeof(char) * (16 + 1));
+	binary = fill_binary_array(binary, int_input, isnegative, 16);
+	hexadecimal = malloc(sizeof(char) * (4 + 1));
+	hexadecimal = fill_hex_array(binary, hexadecimal, 1, 4);
+
+	for (first_digit = i = count = 0; hexadecimal[i]; i++)
+	{
+		if (hexadecimal[i] != '0' && first_digit == 0)
+			first_digit = 1;
+		if (first_digit)
 		{
-			s[i] = s[i] - 32;
+			ibuf = handl_buf(buf, hexadecimal[i], ibuf);
+			count++;
 		}
 	}
 
-	return (s);
+	free(binary);
+	free(hexadecimal);
+
+	return (count);
 }
